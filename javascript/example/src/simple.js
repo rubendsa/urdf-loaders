@@ -79,6 +79,7 @@ function init() {
         robot.rotation.x = -1 * Math.PI / 2;
         robot.traverse(c => {
             c.castShadow = true;
+            c.receiveShadow = true;
         });
         // for (let i = 1; i <= 6; i++) {
 
@@ -87,6 +88,8 @@ function init() {
         //     robot.joints[`AP${ i }`].setJointValue(MathUtils.degToRad(-60));
 
         // }
+        robot.joints['panda_joint4'].setJointValue(-2);
+        console.log(robot.joints)
         robot.updateMatrixWorld(true);
 
         const bb = new Box3();
