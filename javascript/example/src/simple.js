@@ -74,6 +74,11 @@ function init() {
     scene.add(dirLight);
     scene.add(dirLight.target);
 
+    /////
+
+
+
+    /////
 
     const ground = new Mesh(new PlaneBufferGeometry(), new ShadowMaterial({ opacity: 0.25 }));
     ground.rotation.x = -Math.PI / 2;
@@ -126,11 +131,44 @@ function init() {
 
         // robot.position.y -= bb.min.y;
         scene.add(robot);
+    /////
+        const bbox = new THREE.Box3();
+        bbox.makeEmpty();
+        robot.traverse(c => {
+            if (c.isURDFVisual) {
+                bbox.expandByObject(c);
+            }
+        });
+
+        const center = bbox.getCenter(new THREE.Vector3());
+        center.set(0, 0, 0);
+        // const dirLightRefine = directionalLight;
+        const dirLightRefine = dirLight;
+        dirLightRefine.castShadow = true;
+
+
+        // Update the shadow camera rendering bounds to encapsulate the
+        // model. We use the bounding sphere of the bounding box for
+        // simplicity -- this could be a tighter fit.
+        const sphere = bbox.getBoundingSphere(new THREE.Sphere());
+        const minmax = sphere.radius;
+        const cam = dirLightRefine.shadow.camera;
+        cam.left = cam.bottom = -minmax;
+        cam.right = cam.top = minmax;
+
+        // Update the camera to focus on the center of the model so the
+        // shadow can encapsulate it
+        const offset = dirLightRefine.position.clone().sub(dirLightRefine.target.position);
+        dirLightRefine.target.position.copy(center);
+        dirLightRefine.position.copy(center).add(offset);
+
+        cam.updateProjectionMatrix();
+
+        onResize();
+        window.addEventListener('resize', onResize);
+    //////
 
     };
-
-    onResize();
-    window.addEventListener('resize', onResize);
 
 }
 
