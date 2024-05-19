@@ -31,17 +31,27 @@ function init() {
     camera.position.set(10, 10, 10);
     camera.lookAt(0, 0, 0);
 
-    renderer = new WebGLRenderer({ antialias: true });
+    renderer = new WebGLRenderer({ antialias: true, alpha: true });
     renderer.outputEncoding = sRGBEncoding;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = PCFSoftShadowMap;
     document.body.appendChild(renderer.domElement);
 
-    const directionalLight = new DirectionalLight(0xffffff, 1.0);
-    directionalLight.castShadow = true;
-    directionalLight.shadow.mapSize.setScalar(1024);
-    directionalLight.position.set(5, 30, 5);
-    scene.add(directionalLight);
+    // const directionalLight = new DirectionalLight(0xffffff, 1.0);
+    // directionalLight.castShadow = true;
+    // directionalLight.shadow.mapSize.setScalar(1024);
+    // directionalLight.position.set(5, 30, 5);
+    // scene.add(directionalLight);
+
+    // Light setup
+    const dirLight = new DirectionalLight(0xffffff);
+    dirLight.position.set(4, 10, 1);
+    dirLight.shadow.mapSize.width = 2048;
+    dirLight.shadow.mapSize.height = 2048;
+    dirLight.shadow.normalBias = 0.001;
+    dirLight.castShadow = true;
+    scene.add(dirLight);
+    scene.add(dirLight.target);
 
     const ambientLight = new AmbientLight(0xffffff, 0.2);
     scene.add(ambientLight);
