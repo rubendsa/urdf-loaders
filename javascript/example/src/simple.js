@@ -59,33 +59,40 @@ function init() {
 
     // Load robot
     const manager = new LoadingManager();
+    // const loader = new URDFLoader(manager);
+    // loader.load('../../../urdf/T12/urdf/T12_flipped.URDF', result => {
+
+    //     robot = result;
+
+    // });
     const loader = new URDFLoader(manager);
-    loader.load('../../../urdf/T12/urdf/T12_flipped.URDF', result => {
-
+    loader.packages = {
+        'franka_description': '../../../urdf/franka_description/'
+    };
+    loader.load('../../../urdf/franka_description/robots/franka_panda.urdf', result => {
         robot = result;
-
     });
 
     // wait until all the geometry has loaded to add the model to the scene
     manager.onLoad = () => {
 
-        robot.rotation.x = Math.PI / 2;
+        robot.rotation.x = -1 * Math.PI / 2;
         robot.traverse(c => {
             c.castShadow = true;
         });
-        for (let i = 1; i <= 6; i++) {
+        // for (let i = 1; i <= 6; i++) {
 
-            robot.joints[`HP${ i }`].setJointValue(MathUtils.degToRad(30));
-            robot.joints[`KP${ i }`].setJointValue(MathUtils.degToRad(120));
-            robot.joints[`AP${ i }`].setJointValue(MathUtils.degToRad(-60));
+        //     robot.joints[`HP${ i }`].setJointValue(MathUtils.degToRad(30));
+        //     robot.joints[`KP${ i }`].setJointValue(MathUtils.degToRad(120));
+        //     robot.joints[`AP${ i }`].setJointValue(MathUtils.degToRad(-60));
 
-        }
+        // }
         robot.updateMatrixWorld(true);
 
         const bb = new Box3();
         bb.setFromObject(robot);
 
-        robot.position.y -= bb.min.y;
+        // robot.position.y -= bb.min.y;
         scene.add(robot);
 
     };
