@@ -14,6 +14,7 @@ import {
     LoadingManager,
     MathUtils,
 } from 'three';
+import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import URDFLoader from '../../src/URDFLoader.js';
 
@@ -32,10 +33,23 @@ function init() {
     camera.lookAt(0, 0, 0);
 
     renderer = new WebGLRenderer({ antialias: true, alpha: true });
-    renderer.outputEncoding = sRGBEncoding;
+    // renderer.outputEncoding = sRGBEncoding;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = PCFSoftShadowMap;
+    renderer.setClearColor(0xffffff);
+    renderer.setClearAlpha(0);
     document.body.appendChild(renderer.domElement);
+
+    // const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // renderer.setClearColor(0xffffff);
+    // renderer.setClearAlpha(0);
+    // renderer.shadowMap.enabled = true;
+    // renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    // const ambientLight = new AmbientLight(0xffffff, 0.2);
+    // scene.add(ambientLight);
 
     // const directionalLight = new DirectionalLight(0xffffff, 1.0);
     // directionalLight.castShadow = true;
@@ -43,7 +57,14 @@ function init() {
     // directionalLight.position.set(5, 30, 5);
     // scene.add(directionalLight);
 
-    // Light setup
+    const ambientColor = new THREE.Color('#8ea0a8');
+    const ambientLight = new THREE.HemisphereLight(ambientColor, '#000');
+    ambientLight.groundColor.lerp(ambientLight.color, 0.5);
+    ambientLight.intensity = 0.5;
+    ambientLight.position.set(0, 1, 0);
+    scene.add(ambientLight);    
+
+
     const dirLight = new DirectionalLight(0xffffff);
     dirLight.position.set(4, 10, 1);
     dirLight.shadow.mapSize.width = 2048;
@@ -53,8 +74,6 @@ function init() {
     scene.add(dirLight);
     scene.add(dirLight.target);
 
-    const ambientLight = new AmbientLight(0xffffff, 0.2);
-    scene.add(ambientLight);
 
     const ground = new Mesh(new PlaneBufferGeometry(), new ShadowMaterial({ opacity: 0.25 }));
     ground.rotation.x = -Math.PI / 2;
